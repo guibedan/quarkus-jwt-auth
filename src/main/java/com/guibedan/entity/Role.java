@@ -1,10 +1,11 @@
 package com.guibedan.entity;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_role")
-public class Role {
+public class Role extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

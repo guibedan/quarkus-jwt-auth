@@ -1,3 +1,4 @@
 package com.guibedan.exceptions;
 
-public class UserExistsException extends RuntimeException {}
+public class UserExistsException extends RuntimeException {
+}

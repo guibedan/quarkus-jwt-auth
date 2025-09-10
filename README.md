@@ -2,7 +2,7 @@
 
 Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT e MySQL, que gerencia usuários, autenticação e roles (ADMIN e BASIC).
 
----
+<br/>
 
 ## Tecnologias utilizadas
 
@@ -11,7 +11,7 @@ Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT
 - MySQL
 - JWT
 
----
+<br/>
 
 ## Endpoints
 
@@ -72,7 +72,7 @@ Request body:
   Header: Authorization: Bearer <jwt-token>  
   Response: 204 No Content
 
----
+<br/>
 
 ### Autenticação
 
@@ -85,7 +85,7 @@ Request body:
     - privateKey.pem → usada para gerar token
     - publicKey.pem → usada para validar token
 
----
+<br/>
 
 ## Tratamento de erros
 
@@ -104,7 +104,7 @@ Request body:
     - 404 Not Found → UserNotExistsException
     - 500 Internal Server Error → outras exceptions
 
----
+<br/>
 
 ## Observações
 

@@ -1,68 +1,112 @@
-# quarkus-jwt-auth
+Quarkus JWT Auth API
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT e MySQL, que gerencia usuários, autenticação e roles (ADMIN e BASIC).
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+---
 
-## Running the application in dev mode
+Tecnologias utilizadas
 
-You can run your application in dev mode that enables live coding using:
+- Java 21
+- Quarkus
+- MySQL
+- JWT
 
-```shell script
-./mvnw quarkus:dev
+---
+
+Endpoints
+
+Auth
+
+- POST /v1/auth/register  
+  Registra um novo usuário.
+
+Request body:
+```json
+  {
+  "username": "usuario",
+  "password": "senha123"
+  }
+```
+  Response: 201 Created
+
+- POST /v1/auth/login  
+  Faz login e retorna JWT.
+
+  Request body:
+```json
+  {
+  "username": "usuario",
+  "password": "senha123"
+  }
+```  
+  Response:
+```json
+  {
+  "accessToken": "<jwt-token>",
+  "expiresIn": 300
+  }
+```
+---
+
+Users
+
+- GET /v1/users  
+  Retorna lista paginada de usuários (somente ADMIN).
+
+  Query params opcionais:
+    - page → página (default: 0)
+    - pageSize → tamanho da página (default: 10)
+
+  Header: Authorization: Bearer <jwt-token>
+
+- PUT /v1/users  
+  Atualiza a senha do usuário logado (ADMIN ou BASIC).
+
+  Request body:
+```json
+  {
+  "oldPassword": "senhaAtual",
+  "newPassword": "novaSenha123"
+  }
+```
+  Header: Authorization: Bearer <jwt-token>  
+  Response: 204 No Content
+
+---
+
+Autenticação
+
+- Utiliza JWT com claims:
+    - sub → UUID do usuário
+    - upn → username
+    - groups → roles do usuário (ADMIN ou BASIC)
+
+- Chaves de assinatura localizadas em resources:
+    - privateKey.pem → usada para gerar token
+    - publicKey.pem → usada para validar token
+
+---
+
+Tratamento de erros
+
+- Todas as exceptions customizadas retornam JSON padronizado via ExceptionMapper:
+
+```json
+  {
+  "error": "Bad credentials",
+  "message": "Usuário ou senha incorretos."
+  }
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+- Status HTTP correspondentes:
+    - 401 Unauthorized → BadCredentialsException
+    - 409 Conflict → UserExistsException
+    - 404 Not Found → UserNotExistsException
+    - 500 Internal Server Error → outras exceptions
 
-## Packaging and running the application
+---
 
-The application can be packaged using:
+Observações
 
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/quarkus-jwt-auth-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+- Sempre usar tokens válidos no header Authorization (Bearer <token>) para endpoints privados.
+- As roles são definidas via enum Role.Values e armazenadas no JWT.

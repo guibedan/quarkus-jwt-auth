@@ -14,6 +14,10 @@ public class Role extends PanacheEntityBase {
 
     private String name;
 
+    public String getName() {
+        return name;
+    }
+
     public enum Values {
         ADMIN(1L), BASIC(2L);
 

@@ -1,10 +1,10 @@
-Quarkus JWT Auth API
+# Quarkus JWT Auth API
 
 Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT e MySQL, que gerencia usuários, autenticação e roles (ADMIN e BASIC).
 
 ---
 
-Tecnologias utilizadas
+## Tecnologias utilizadas
 
 - Java 21
 - Quarkus
@@ -13,9 +13,9 @@ Tecnologias utilizadas
 
 ---
 
-Endpoints
+## Endpoints
 
-Auth
+### Auth
 
 - POST /v1/auth/register  
   Registra um novo usuário.
@@ -48,7 +48,7 @@ Request body:
 ```
 ---
 
-Users
+### Users
 
 - GET /v1/users  
   Retorna lista paginada de usuários (somente ADMIN).
@@ -74,7 +74,7 @@ Users
 
 ---
 
-Autenticação
+### Autenticação
 
 - Utiliza JWT com claims:
     - sub → UUID do usuário
@@ -87,7 +87,7 @@ Autenticação
 
 ---
 
-Tratamento de erros
+## Tratamento de erros
 
 - Todas as exceptions customizadas retornam JSON padronizado via ExceptionMapper:
 
@@ -106,7 +106,7 @@ Tratamento de erros
 
 ---
 
-Observações
+## Observações
 
 - Sempre usar tokens válidos no header Authorization (Bearer <token>) para endpoints privados.
 - As roles são definidas via enum Role.Values e armazenadas no JWT.

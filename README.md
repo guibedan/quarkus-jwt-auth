@@ -10,6 +10,9 @@ Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT
 - Quarkus
 - MySQL
 - JWT
+- Google Smtp
+- AWS SES
+- Validation
 
 <br/>
 
@@ -23,7 +26,7 @@ Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT
 Request body:
 ```json
   {
-  "username": "usuario",
+  "username": "email@email.com",
   "password": "senha123"
   }
 ```
@@ -32,7 +35,7 @@ Request body:
 - POST /v1/auth/login  
   Faz login e retorna JWT.
 
-  Request body:
+Request body:
 ```json
   {
   "username": "usuario",
@@ -46,6 +49,32 @@ Request body:
   "expiresIn": 300
   }
 ```
+
+- POST /v1/auth/send/reset-password/mail
+
+  Envia um email para recuperar a senha.
+
+Request body:
+```json
+{
+"username": "email@email.com"
+}
+```
+
+- POST /v1/auth/send/reset-password/mail
+
+  Envia um email para recuperar a senha.
+
+QueryParms:
+- token - É o token que permite a mundaça de senha enviado na url do email (ele expira em 1 hora) 
+
+Request body:
+```json
+{
+"newPassword": "senhaNova123"
+}
+```
+
 ---
 
 ### Users

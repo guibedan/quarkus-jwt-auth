@@ -25,6 +25,10 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                 status = Response.Status.NOT_FOUND;
                 yield new ErrorResponse("User not found", "Usuário não existe.");
             }
+            case NotValidTokenException e -> {
+                status = Response.Status.UNAUTHORIZED;
+                yield new ErrorResponse("Invalid token", e.getMessage());
+            }
             default -> {
                 status = Response.Status.INTERNAL_SERVER_ERROR;
                 yield new ErrorResponse(

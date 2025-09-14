@@ -5,6 +5,7 @@ import com.guibedan.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -37,7 +38,7 @@ public class UserController {
     @PUT
     @Transactional
     @RolesAllowed({"ADMIN", "BASIC"})
-    public Response updatePassword(UpdatePasswordDto updatePasswordDto) {
+    public Response updatePassword(@Valid UpdatePasswordDto updatePasswordDto) {
         userService.updatePassword(updatePasswordDto, UUID.fromString(jwt.getSubject()));
         return Response.noContent().build();
     }

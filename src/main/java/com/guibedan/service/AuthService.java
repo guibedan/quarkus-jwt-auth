@@ -1,26 +1,37 @@
 package com.guibedan.service;
 
-import com.guibedan.controller.dto.CreateUserDto;
-import com.guibedan.controller.dto.LoginDto;
-import com.guibedan.controller.dto.TokenDto;
+import com.guibedan.contants.EmailTemplates;
+import com.guibedan.controller.dto.*;
+import com.guibedan.entity.PasswordResetToken;
 import com.guibedan.entity.Role;
 import com.guibedan.entity.User;
 import com.guibedan.exceptions.BadCredentialsException;
+import com.guibedan.exceptions.NotValidTokenException;
 import com.guibedan.exceptions.UserExistsException;
+import com.guibedan.exceptions.UserNotExistsException;
+import com.guibedan.service.strategy.EmailStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.mail.MessagingException;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
+import java.util.UUID;
 
 @ApplicationScoped
 public class AuthService {
 
-    private final BCryptService bCryptService;
-    private final JwtService jwtService;
+    @Inject
+    BCryptService bCryptService;
 
-    public AuthService(BCryptService bCryptService, JwtService jwtService) {
-        this.bCryptService = bCryptService;
-        this.jwtService = jwtService;
-    }
+    @Inject
+    JwtService jwtService;
+
+    @Inject
+    @Named("GmailSmtpEmailStrategy")
+    EmailStrategy emailStrategy;
 
     public void register(CreateUserDto createUserDto) {
         var role = Role.findById(Role.Values.BASIC.getRoleId());
@@ -51,6 +62,47 @@ public class AuthService {
         var accessToken = jwtService.generateToken(user, expiresIn);
 
         return new TokenDto(accessToken, expiresIn);
+    }
+
+    public void sendResetPasswordMail(RecoverPasswordDto recoverPasswordDto) throws MessagingException {
+        var existsUser = User.findByUsernameOptional(recoverPasswordDto.username());
+
+        if (existsUser.isEmpty()) {
+            throw new UserNotExistsException();
+        }
+
+        var token = UUID.randomUUID();
+        var expiryDate = Instant.now().plus(1, ChronoUnit.HOURS);
+
+        PasswordResetToken entity = new PasswordResetToken();
+        entity.user = existsUser.get();
+        entity.token = token;
+        entity.expiryDate = expiryDate;
+
+        entity.persist();
+
+        var emailResetPassword = EmailTemplates.resetPasswordEmail(token.toString());
+        emailStrategy.sendEmail(recoverPasswordDto.username(), "Recuperação de senha", emailResetPassword);
+    }
+
+    public void resetPassword(String token, ResetPasswordDto resetPasswordDto) {
+
+        if (token == null || token.isEmpty()) {
+            throw new NotValidTokenException("Token não pode ser nulo ou vazio.");
+        }
+
+        var existsValidToken = PasswordResetToken.findByTokenAndAfterDateNowOptional(UUID.fromString(token), Instant.now());
+
+        if (existsValidToken.isEmpty()) {
+            throw new NotValidTokenException("A senha já foi trocada ou expirou o tempo.");
+        }
+
+        var validTokenEntity = existsValidToken.get();
+
+        var userEntity = validTokenEntity.user;
+        userEntity.password = bCryptService.hashPassword(resetPasswordDto.newPassword());
+
+        validTokenEntity.used = true;
     }
 
 }

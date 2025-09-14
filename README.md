@@ -10,7 +10,7 @@ Este projeto é uma API RESTful desenvolvida com Quarkus, Hibernate Panache, JWT
 - Quarkus
 - MySQL
 - JWT
-- Google Smtp
+- Gmail Smtp
 - AWS SES
 - Validation
 

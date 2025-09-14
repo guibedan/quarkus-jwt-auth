@@ -51,7 +51,6 @@ Request body:
 ```
 
 - POST /v1/auth/send/reset-password/mail
-
   Envia um email para recuperar a senha.
 
 Request body:
@@ -61,9 +60,8 @@ Request body:
 }
 ```
 
-- POST /v1/auth/send/reset-password/mail
-
-  Envia um email para recuperar a senha.
+- POST /v1/auth/reset-password
+  Muda a senha antiga para nova, usando o token no params para autenticar.
 
 QueryParms:
 - token - É o token que permite a mundaça de senha enviado na url do email (ele expira em 1 hora) 

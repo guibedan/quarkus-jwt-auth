@@ -1,6 +1,5 @@
 package com.guibedan.service;
 
-import com.guibedan.contants.EmailTemplates;
 import com.guibedan.controller.dto.*;
 import com.guibedan.entity.PasswordResetToken;
 import com.guibedan.entity.Role;
@@ -10,6 +9,7 @@ import com.guibedan.exceptions.NotValidTokenException;
 import com.guibedan.exceptions.UserExistsException;
 import com.guibedan.exceptions.UserNotExistsException;
 import com.guibedan.service.strategy.EmailStrategy;
+import com.guibedan.utils.EmailTemplates;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -47,7 +47,7 @@ public class AuthService {
         user.password = bCryptService.hashPassword(createUserDto.password());
         user.role = Set.of((Role) role);
 
-        User.persist(user);
+        user.persist();
     }
 
     public TokenDto login(LoginDto loginDto) {

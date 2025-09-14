@@ -1,4 +1,4 @@
-package com.guibedan.contants;
+package com.guibedan.utils;
 
 public class EmailTemplates {
 

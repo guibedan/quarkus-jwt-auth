@@ -10,6 +10,7 @@ import com.guibedan.exceptions.UserExistsException;
 import com.guibedan.exceptions.UserNotExistsException;
 import com.guibedan.service.strategy.EmailStrategy;
 import com.guibedan.utils.EmailTemplates;
+import com.guibedan.utils.TokenUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -29,6 +30,9 @@ public class AuthService {
 
     @Inject
     JwtService jwtService;
+
+    @Inject
+    TokenUtils tokenUtils;
 
     @Inject
     @Named("GmailSmtpEmailStrategy")
@@ -80,7 +84,7 @@ public class AuthService {
 
         PasswordResetToken entity = new PasswordResetToken();
         entity.user = existsUser.get();
-        entity.token = token;
+        entity.token = tokenUtils.generateToken();
         entity.expiryDate = expiryDate;
 
         entity.persist();
@@ -96,7 +100,7 @@ public class AuthService {
             throw new NotValidTokenException("Token não pode ser nulo ou vazio.");
         }
 
-        var existsValidToken = PasswordResetToken.findByTokenAndAfterDateNowOptional(UUID.fromString(token), Instant.now());
+        var existsValidToken = PasswordResetToken.findByTokenAndAfterDateNowOptional(token, Instant.now());
 
         if (existsValidToken.isEmpty()) {
             throw new NotValidTokenException("A senha já foi trocada ou expirou o tempo.");

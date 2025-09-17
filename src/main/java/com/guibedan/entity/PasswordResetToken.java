@@ -12,7 +12,7 @@ import java.util.UUID;
 public class PasswordResetToken extends PanacheEntityBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
     public UUID token;

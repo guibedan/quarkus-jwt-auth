@@ -107,7 +107,7 @@ public class AuthService {
         var userEntity = validTokenEntity.user;
         userEntity.password = bCryptService.hashPassword(resetPasswordDto.newPassword());
 
-        validTokenEntity.used = true;
+        validTokenEntity.delete();
     }
 
 }

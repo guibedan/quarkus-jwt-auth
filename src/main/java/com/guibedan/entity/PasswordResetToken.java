@@ -22,8 +22,6 @@ public class PasswordResetToken extends PanacheEntityBase {
 
     public Instant expiryDate;
 
-    public boolean used = false;
-
     public static Optional<PasswordResetToken> findByTokenAndAfterDateNowOptional(UUID uuid, Instant now) {
         return find("token = ?1 and expiryDate > ?2 and used = false", uuid, now).singleResultOptional();
     }

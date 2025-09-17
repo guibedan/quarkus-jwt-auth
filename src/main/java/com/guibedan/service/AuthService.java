@@ -106,6 +106,7 @@ public class AuthService {
 
         var userEntity = validTokenEntity.user;
         userEntity.password = bCryptService.hashPassword(resetPasswordDto.newPassword());
+        userEntity.persist();
 
         validTokenEntity.delete();
     }

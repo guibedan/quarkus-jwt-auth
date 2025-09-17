@@ -14,6 +14,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -33,6 +34,7 @@ public class AuthService {
     @Named("GmailSmtpEmailStrategy")
     EmailStrategy emailStrategy;
 
+    @Transactional
     public void register(CreateUserDto createUserDto) {
         var role = Role.findById(Role.Values.BASIC.getRoleId());
 
@@ -50,6 +52,7 @@ public class AuthService {
         user.persist();
     }
 
+    @Transactional
     public TokenDto login(LoginDto loginDto) {
 
         var user = User.findByUsernameOptional(loginDto.username()).orElseThrow(UserExistsException::new);
@@ -64,6 +67,7 @@ public class AuthService {
         return new TokenDto(accessToken, expiresIn);
     }
 
+    @Transactional
     public void sendResetPasswordMail(RecoverPasswordDto recoverPasswordDto) throws MessagingException {
         var existsUser = User.findByUsernameOptional(recoverPasswordDto.username());
 
@@ -85,6 +89,7 @@ public class AuthService {
         emailStrategy.sendEmail(recoverPasswordDto.username(), "Recuperação de senha", emailResetPassword);
     }
 
+    @Transactional
     public void resetPassword(String token, ResetPasswordDto resetPasswordDto) {
 
         if (token == null || token.isEmpty()) {

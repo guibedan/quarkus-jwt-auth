@@ -6,7 +6,6 @@ import com.guibedan.controller.dto.RecoverPasswordDto;
 import com.guibedan.controller.dto.ResetPasswordDto;
 import com.guibedan.service.AuthService;
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -25,7 +24,6 @@ public class AuthController {
 
     @POST
     @Path("/register")
-    @Transactional
     public Response register(@Valid CreateUserDto createUserDto) {
         authService.register(createUserDto);
         return Response.status(Response.Status.CREATED).build();
@@ -33,7 +31,6 @@ public class AuthController {
 
     @POST
     @Path("/login")
-    @Transactional
     public Response login(LoginDto loginDto) {
         var response = authService.login(loginDto);
         return Response.ok().entity(response).build();
@@ -41,7 +38,6 @@ public class AuthController {
 
     @POST
     @Path("/send/reset-password/mail")
-    @Transactional
     public Response sendResetPasswordMail(@Valid RecoverPasswordDto recoverPasswordDto) throws MessagingException {
         authService.sendResetPasswordMail(recoverPasswordDto);
         return Response.noContent().build();
@@ -49,7 +45,6 @@ public class AuthController {
 
     @POST
     @Path("/reset-password")
-    @Transactional
     public Response resetPassword(@QueryParam("token") String token, @Valid ResetPasswordDto resetPasswordDto) {
         authService.resetPassword(token, resetPasswordDto);
         return Response.noContent().build();

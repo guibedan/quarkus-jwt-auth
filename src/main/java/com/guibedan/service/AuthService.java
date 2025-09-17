@@ -59,7 +59,7 @@ public class AuthService {
     @Transactional
     public TokenDto login(LoginDto loginDto) {
 
-        var user = User.findByUsernameOptional(loginDto.username()).orElseThrow(UserExistsException::new);
+        var user = User.findByUsernameOptional(loginDto.username()).orElseThrow(UserNotExistsException::new);
 
         if (!bCryptService.verifyPassword(loginDto.password(), user.password)) {
             throw new BadCredentialsException();
@@ -79,12 +79,12 @@ public class AuthService {
             throw new UserNotExistsException();
         }
 
-        var token = UUID.randomUUID();
+        var token = tokenUtils.generateToken();
         var expiryDate = Instant.now().plus(1, ChronoUnit.HOURS);
 
         PasswordResetToken entity = new PasswordResetToken();
         entity.user = existsUser.get();
-        entity.token = tokenUtils.generateToken();
+        entity.token = token;
         entity.expiryDate = expiryDate;
 
         entity.persist();

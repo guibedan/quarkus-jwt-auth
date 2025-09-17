@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_passoword_reset")
+@Table(name = "tb_password_reset")
 public class PasswordResetToken extends PanacheEntityBase {
 
     @Id
